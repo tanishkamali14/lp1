@@ -1,0 +1,53 @@
+package priority;
+
+import java.util.*;
+
+class Process {
+    int pid;
+    int burstTime;
+    int arrivalTime;
+    int priority;
+    int waitingTime;
+    int turnaroundTime;
+
+    Process(int pid, int burstTime, int arrivalTime, int priority) {
+        this.pid = pid;
+        this.burstTime = burstTime;
+        this.arrivalTime = arrivalTime;
+        this.priority = priority;
+    }
+}
+
+public class PriorityNonPreemptiveAlgorithm {
+    public static void main(String[] args) {
+        List<Process> processes = new ArrayList<>();
+
+        // Add processes
+        processes.add(new Process(1, 10, 0, 3));
+        processes.add(new Process(2, 6, 2, 1));
+        processes.add(new Process(3, 8, 3, 2));
+        processes.add(new Process(4, 3, 4, 4));
+        processes.add(new Process(5, 4, 6, 5));
+
+        runPriority(processes);
+    }
+
+    public static void runPriority(List<Process> processes) {
+        Collections.sort(processes, Comparator.comparingInt(p -> p.priority));
+        int currentTime = 0;
+        int totalWaitingTime = 0;
+
+        for (Process process : processes) {
+            int waitingTime = Math.max(0, currentTime - process.arrivalTime);
+            process.waitingTime = waitingTime;
+            totalWaitingTime += waitingTime;
+            currentTime += process.burstTime;
+            process.turnaroundTime = currentTime - process.arrivalTime;
+            System.out.println("Process " + process.pid + ": Waiting Time = " + waitingTime
+                    + ", Turnaround Time = " + process.turnaroundTime);
+        }
+
+        double averageWaitingTime = (double) totalWaitingTime / processes.size();
+        System.out.println("Average Waiting Time: " + averageWaitingTime);
+    }
+}
