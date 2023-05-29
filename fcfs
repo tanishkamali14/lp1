@@ -1,0 +1,55 @@
+package fcfs;
+
+import java.util.*;
+
+class Process {
+    int pid;
+    int burstTime;
+    int arrivalTime;
+    int waitingTime;
+    int turnaroundTime;
+
+    Process(int pid, int burstTime, int arrivalTime) {
+        this.pid = pid;
+        this.burstTime = burstTime;
+        this.arrivalTime = arrivalTime;
+    }
+}
+
+public class FCFSAlgorithm {
+    public static void main(String[] args) {
+        List<Process> processes = new ArrayList<>();
+
+        // Add processes
+        processes.add(new Process(1, 10, 0));
+        processes.add(new Process(2, 6, 2));
+        processes.add(new Process(3, 8, 3));
+        processes.add(new Process(4, 3, 4));
+        processes.add(new Process(5, 4, 6));
+
+        runFCFS(processes);
+    }
+
+    public static void runFCFS(List<Process> processes) {
+        Collections.sort(processes, Comparator.comparingInt(p -> p.arrivalTime));
+        int currentTime = 0;
+        int totalWaitingTime = 0;
+
+        for (Process process : processes) {
+            int waitingTime = Math.max(0, currentTime - process.arrivalTime);
+            process.waitingTime = waitingTime;
+            totalWaitingTime += waitingTime;
+            currentTime += process.burstTime;
+            process.turnaroundTime = currentTime - process.arrivalTime;
+        }
+
+        System.out.println("Process\tBurst Time\tArrival Time\tWaiting Time\tTurnaround Time");
+        for (Process process : processes) {
+            System.out.println(process.pid + "\t\t" + process.burstTime + "\t\t" + process.arrivalTime + "\t\t"
+                    + process.waitingTime + "\t\t" + process.turnaroundTime);
+        }
+
+        double averageWaitingTime = (double) totalWaitingTime / processes.size();
+        System.out.println("Average Waiting Time: " + averageWaitingTime);
+    }
+}
